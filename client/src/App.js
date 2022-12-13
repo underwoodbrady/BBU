@@ -26,7 +26,7 @@ function App() {
     const getEntries = async () => {
         setFormData({});
         /** SET FORM TO BE CLEARED */
-        fetch("http://localhost:2020/api/read")
+        fetch("http://csci335.cs.montana.icu/api/read")
             .then((res) => res.json())
             .then((json) => setEntries(json))
             .catch((err) => console.assert(err));
@@ -73,7 +73,7 @@ function App() {
                 "Content-Type": "application/json",
             },
         };
-        fetch("http://localhost:2020/api/create", requestOptions)
+        fetch("http://csci335.cs.montana.icu/api/create", requestOptions)
             .then((res) => getEntries())
             .catch((err) => console.assert(err));
     };
@@ -82,7 +82,7 @@ function App() {
         const requestOptions = {
             method: "POST",
         };
-        fetch("http://localhost:2020/api/clear", requestOptions)
+        fetch("http://csci335.cs.montana.icu/api/clear", requestOptions)
             .then((res) => getEntries())
             .catch((err) => console.assert(err));
     };
