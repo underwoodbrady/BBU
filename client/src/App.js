@@ -6,6 +6,7 @@ import Entry from "./components/Entry";
 import Popup from "./components/Popup";
 import BSF from "./images/BSF2.svg";
 import banner from "./images/banner.png";
+import check from "./images/check2.svg";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
     const [popupData, setPopupData] = useState({});
     const [filterOption, setFilterOption] = useState("");
     const [sortedEntries, setSortedEntries] = useState([]);
+    const [submittedPopup, setSubmittedPopup] = useState(false);
 
     useEffect(() => {
         if (entries.length == 0) {
@@ -34,38 +36,47 @@ function App() {
     };
 
     const validateInput = (data) => {
-        return false;
-        /*if (
+        if (
             data.first &&
             data.last &&
-            data.email &&
-            data.phone &&
-            data.organization &&
-            data.date
+            data.email 
         )
             return false;
-        
-        if(!data.first)
-            return "first"
-        if(!data.last)
-            return "last"
-        if(!data.email)
-            return "email"
-        if(!data.phone)
-            return "phone"
-        if(!data.organization)
-            return "organization"
-        if(!data.date)
-            return "date"
-        */
+        return true;
+    };
+
+    const clearInput = () => {
+        const first = document.getElementById("First"),
+            last = document.getElementById("Last"),
+            email = document.getElementById("Email"),
+            phone = document.getElementById("Phone #"),
+            date = document.getElementById("Date"),
+            organization = document.getElementById("Organization");
+
+        first.value =
+            last.value =
+            email.value =
+            phone.value =
+            date.value =
+            organization.value =
+                "";
     };
 
     const addEntry = () => {
-        let inputTest = validateInput(formData);
-        if (inputTest) {
-            alert("Missing Form Inputs" + inputTest);
+
+        if (validateInput(formData)) {
+            alert("Missing Form Inputs");
             return;
         }
+
+        clearInput();
+
+        setSubmittedPopup(true);
+
+        setTimeout(()=>{
+            setSubmittedPopup(false);
+        },800)
+
         const requestOptions = {
             method: "POST",
             body: JSON.stringify(formData),
@@ -137,7 +148,7 @@ function App() {
     };
 
     const sortByDate = () => {
-        let date = prompt("What date do you want? (Ex YYYY-MM-DD)")
+        let date = prompt("What date do you want? (Ex YYYY-MM-DD)");
 
         setFilterOption("date");
         let sortedArr = [...entries];
@@ -149,14 +160,18 @@ function App() {
     };
 
     const sortByVolunteer = () => {
-        let volunteer = prompt("What volunteer do you want? (first name only)")
+        let volunteer = prompt("What volunteer do you want? (first name only)");
 
         setFilterOption("volunteer");
 
         let sortedArr = [...entries];
         sortedArr = sortedArr.filter((entry) => {
-            return entry.first.toUpperCase() == volunteer.toUpperCase();
+            return (
+                entry.first.toUpperCase().trim() ==
+                volunteer.toUpperCase().trim()
+            );
         });
+        console.log(sortedArr);
 
         setSortedEntries(sortedArr);
     };
@@ -192,7 +207,15 @@ function App() {
                         <img src={banner} className="w-full rounded-lg" />
                     </section>
                     {!adminPage && (
-                        <section>
+                        <section className="relative">
+                            {submittedPopup && (
+                                <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 bg-sky-600 rounded-lg drop-shadow-md p-4 flex items-center">
+                                    <p className="text-white text-sm font-semibold">
+                                        Form successfully submitted
+                                    </p>
+                                    <img src={check} className="w-10" />
+                                </div>
+                            )}
                             <div className="flex space-x-8 mb-4">
                                 <InputField
                                     label="First"
@@ -256,36 +279,36 @@ function App() {
                                     </p>
                                     <button
                                         className={
-                                            "h-6 bg-sky-100 rounded-lg text-xs drop-shadow-md text-sky-800 px-2 hover:font-bold" +
+                                            "h-6 rounded-lg text-xs drop-shadow-md text-sky-800 px-2 hover:font-bold hover:bg-sky-100 duration-150" +
                                             (filterOption === "frequency"
-                                                ? " font-bold"
-                                                : "")
+                                                ? " font-bold bg-sky-100"
+                                                : " bg-sky-100/90")
                                         }
                                         onClick={() => sortByFrequency()}>
                                         Frequency
                                     </button>
                                     <button
                                         className={
-                                            "h-6 bg-sky-100 rounded-lg text-xs drop-shadow-md text-sky-800 px-2 hover:font-bold" +
+                                            "h-6 rounded-lg text-xs drop-shadow-md text-sky-800 px-2 hover:font-bold hover:bg-sky-100 transition-all duration-150" +
                                             (filterOption === "date"
-                                                ? " font-bold"
-                                                : "")
+                                                ? " font-bold bg-sky-100"
+                                                : " bg-sky-100/90")
                                         }
                                         onClick={() => sortByDate()}>
                                         Date
                                     </button>
                                     <button
                                         className={
-                                            "h-6 bg-sky-100 rounded-lg text-xs drop-shadow-md text-sky-800 px-2 hover:font-bold" +
+                                            "h-6 rounded-lg text-xs drop-shadow-md text-sky-800 px-2 hover:font-bold hover:bg-sky-100 duration-150" +
                                             (filterOption === "volunteer"
-                                                ? " font-bold"
-                                                : "")
+                                                ? " font-bold bg-sky-100"
+                                                : " bg-sky-100/90")
                                         }
                                         onClick={() => sortByVolunteer()}>
                                         Volunteer
                                     </button>
                                     <button
-                                        className="h-6 bg-red-200 rounded-lg text-xs drop-shadow-md text-sky-800 px-2 hover:font-bold"
+                                        className="h-6 bg-red-200/90 rounded-lg text-xs drop-shadow-md text-sky-800 px-2 hover:font-bold hover:bg-red-200 transition-all duration-150"
                                         onClick={() => clearSort()}>
                                         Reset Filters
                                     </button>
